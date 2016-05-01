@@ -1,54 +1,102 @@
+## Programming Assignment 2 - R Programming
+## Data Science Specialization Track
+ 
+## makeCacheMatrix:
+## To facilitate this caching, you first create a special
+## matrix that will help us with this by using the
+ 
 
-## Creates a special "matrix" object that can cache its inverse.
 makeCacheMatrix <- function(x = matrix()) {
-       
-        cache <- NULL
-      
-        set <- function(y) {
-                x <<- y
-                cache <<- NULL
-        }
-              get <- function() x
-               setMatrix <- function(inverse) cache <<- inverse
-              getInverse <- function() cache
-    
-        list(set = set, get = get,
-             setMatrix = setMatrix,
-             getInverse = getInverse)
+	# Following the same format as the assignment example
+	# Creating a makeCacheMatrix object will consist of
+	# four functions encapsulated in a list
+	# 1. set the matrix
+	# 2. get the matrix
+	# 3. set the inverse of the matrix
+	# 4. get the inverse of the matrix
+
+	# Initially set to NULL
+	# Changes when the user sets the value
+    inv <- NULL
+
+    # set function
+    # Sets the matrix itself but not the inverse
+    set <- function(y) {
+            x <<- y
+            inv <<- NULL
+    }
+
+    # get function
+    # Gets the matrix itself but not the inverse
+    get <- function() x
+
+    # Manually set the inverse
+    setinverse <- function(inverse) inv <<- inverse
+
+    # Get the inverse
+    getinverse <- function() inv
+
+    # Encapsulate into a list
+    list(set = set, get = get,
+         setinverse = setinverse,
+         getinverse = getinverse)	
 }
 
-## Computes the inverse. If the inverse has already been calculated, then the cachesolve should retrieve the inverse from the cache 
+## cacheSolve:
+## Once you create this matrix, you use the cacheSolve
+## function to compute the inverse and cache the result
+##
+## If you try using cacheSolve again on the same special
+## matrix, then the pre-computed result is obtained, thus
+## avoiding any recomputation.  An informative message
+## will be shown in the command prompt when the pre-computed
+## result is returned instead.
+##
+## Usage example:
+## x <- matrix(1:4, nrow=2, ncol=2)
+## m <- makeCacheMatrix(x)
+## s <- cacheSolve(m)
+## print(s)
+## s should return:
+##     [,1] [,2]
+##[1,]   -2  1.5
+##[2,]    1 -0.5
+##
+## s2 <- cacheSolve(m)
+## This should display a "Getting cached matrix" message
+## print(s2)
+## s2 should return
+##     [,1] [,2]
+##[1,]   -2  1.5
+##[2,]    1 -0.5
 
 cacheSolve <- function(x, ...) {
-        
-        cache <- x$getInverse()
-      
-        if (!is.null(cache)) {
-                message("getting cached data")
+    ## Return a matrix that is the inverse of 'x'
+    # Following the same format as the assignment example
 
-                return(cache)
-        }
+    # Get the current state of the inverse and see if it
+    # has been computed yet
+    inv <- x$getinverse()
 
-        matrix <- x$get()
-        tryCatch( {
+    # If it has...
+    if(!is.null(inv)) {
+    	# Simply return the computed inverse		
+        message("Getting cached matrix")
+        return(inv)
+    }
 
-                cache <- solve(matrix, ...)
-        },
-        error = function(e) {
-                message("Error:")
-                message(e)
+    # If it hasn't...
+    # Get the matrix itself
+    data <- x$get()
 
-                return(NA)
-        },
-        warning = function(e) {
-                message("Warning:")
-                message(e)
+    # Find the inverse
+    inv <- solve(data, ...)
 
-                return(NA)
-        },
-        finally = {
+    # Cache this result in the object
+    x$setinverse(inv)
 
-                x$setMatrix(cache)
-        } )
-        return (cache)
+    # Return this new result
+    inv    
 }
+Status API Training Shop Blog About
+© 2016 GitHub, Inc. Terms Privacy Security Contact 
